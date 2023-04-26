@@ -2,6 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\ProjectController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -14,10 +16,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-/*Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::apiResource('projects', ProjectController::class);
+/*Route::get('/test', function () {
+    $names =
+        ['io', 'star', 'luk'];
+    return response()->json(['names' => $names]);
 });*/
-
-Route::get("/test", function () {
-    echo "ciao";
-});
