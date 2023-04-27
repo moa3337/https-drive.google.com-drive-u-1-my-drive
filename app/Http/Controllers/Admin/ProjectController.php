@@ -7,6 +7,7 @@ use App\Mail\PublishedProjectMail;
 use App\Models\Project;
 use App\Models\Technology;
 use App\Models\Type;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
@@ -84,9 +85,19 @@ class ProjectController extends Controller
         if (Arr::exists($data, "technologies"))
             $project->technologies()->attach($data["technologies"]);
 
-        $mail = new PublishedProjectMail();
-        $user_email = Auth::user()->email;
-        Mail::to($user_email)->send($mail);
+        if ($project->published) {
+            $users = User::select('email')
+                ->where('id', '<>', Auth::id())
+                ->get()
+                ->pluck('email')
+                ->toArray();
+                
+            $mail = new PublishedProjectMail($project);
+            foreach($users as $user) {
+                Mail::to($user->email)->send($mail);
+            }
+        }
+
 
         return to_route('admin.projects.show', $project)
             ->with('message', 'Progetto creato con successo');
@@ -148,6 +159,8 @@ class ProjectController extends Controller
             ]
         );
 
+        $initial_status = $project->published;
+
         $data = $request->all();
         $data['slug'] = Project::generateSlug($data['title']);
         $data['published'] = $request->has('published') ? 1 : 0;
@@ -159,6 +172,12 @@ class ProjectController extends Controller
         }
 
         $project->update($data);
+
+        if ($initial_status != $project->published) {
+            $mail = new PublishedProjectMail($project);
+            $user_email = Auth::user()->email;
+            Mail::to($user_email)->send($mail);
+        }
 
         if (Arr::exists($data, "technologies"))
             $project->technologies()->sync($data["technologies"]);
