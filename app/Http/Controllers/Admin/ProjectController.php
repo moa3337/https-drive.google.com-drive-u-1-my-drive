@@ -13,6 +13,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class ProjectController extends Controller
 {
@@ -48,28 +49,10 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate(
-            [
-                'title' => 'required|string|max:100',
-                'image' => 'nullable|image',
-                'text' => 'required|string',
-                'published' => 'boolean',
-                'type_id' => 'nullable|exists:types,id',
-                'technologies' => 'nullable|exists:technologies,id',
-            ],
-            [
-                'title.required' => 'Il titolo è obbligatorio',
-                'title.string' => 'Il titolo deve essere una stringa',
-                'title.max' => 'Il titolo non può avere più 100 caratteri',
-                'image.image' => 'L\'immagine deve essere un\'immagine',
-                'text.required' => 'La descrizione è obbligatoria',
-                'text.string' => 'La descrizione deve essere una stringa',
-                'type_id.exists' => 'L\'id del tipo non è valido',
-                'technologies.exists' => 'Le tecnologie aggiunte non sono valide',
-            ]
-        );
-
         $data = $request->all();
+        
+        // La validazione in in fondo alla pagina
+        $this->validation($data);
 
         if (Arr::exists($data, 'image')) {
             $path = Storage::put('uploads/projects', $data['image']);
@@ -137,27 +120,8 @@ class ProjectController extends Controller
      */
     public function update(Request $request, Project $project)
     {
-        //dd($request->all());
-        $request->validate(
-            [
-                'title' => 'required|string|max:100',
-                'image' => 'nullable|image',
-                'text' => 'required|string',
-                'published' => 'boolean',
-                'type_id' => 'nullable|exists:types,id',
-                'technologies' => 'nullable|exists:technologies,id',
-            ],
-            [
-                'title.required' => 'Il titolo è obbligatorio',
-                'title.string' => 'Il titolo deve essere una stringa',
-                'title.max' => 'Il titolo non può avere più 100 caratteri',
-                'image.image' => 'L\'immagine deve essere un\'immagine',
-                'text.required' => 'La descrizione è obbligatoria',
-                'text.string' => 'La descrizione deve essere una stringa',
-                'type_id.exists' => 'L\'id del tipo non è valido',
-                'technologies.exists' => 'Le tecnologie aggiunte non sono valide',
-            ]
-        );
+        // La validazione in in fondo alla pagina
+        $this->validation($request->all());
 
         $initial_status = $project->published;
 
@@ -251,5 +215,30 @@ class ProjectController extends Controller
 
         return to_route('admin.projects.index')
             ->with('message', "Progetto $id ripristinato correttamente");
+    }
+
+    // Funzione per invocare la validazione
+    private function validation($data) {
+        return Validator::make(
+            $data,
+            [
+                'title' => 'required|string|max:100',
+                'image' => 'nullable|image',
+                'text' => 'required|string',
+                'published' => 'boolean',
+                'type_id' => 'nullable|exists:types,id',
+                'technologies' => 'nullable|exists:technologies,id',
+            ],
+            [
+                'title.required' => 'Il titolo è obbligatorio',
+                'title.string' => 'Il titolo deve essere una stringa',
+                'title.max' => 'Il titolo non può avere più 100 caratteri',
+                'image.image' => 'L\'immagine deve essere un\'immagine',
+                'text.required' => 'La descrizione è obbligatoria',
+                'text.string' => 'La descrizione deve essere una stringa',
+                'type_id.exists' => 'L\'id del tipo non è valido',
+                'technologies.exists' => 'Le tecnologie aggiunte non sono valide',
+            ]
+        )->validate();
     }
 }

@@ -5,7 +5,8 @@
 {{ $project->getAbstract(100) }}
 
 @if ($project->published)
-    <x-mail::button :url="env('APP_FRONTEND_URL') . '/projects/' . $project->slug">
+    <x-mail::button :url="'http://localhost:5174/projects/' . $project->slug">
+        <!--env('APP_FRONTEND_URL') . '/projects/' . $project->slug-->    
         View project
     </x-mail::button>
 @endif
