@@ -26,6 +26,11 @@ class Project extends Model
         return $this->belongsTo(Type::class);
     }
 
+    public function comments()
+    {
+        return $this->hasMany(comment::class);
+    }
+
     // @ Getter
 
     public function getAbstract($max = 40)
@@ -50,7 +55,7 @@ class Project extends Model
     }
     public function getImageUri()
     {
-        return $this->image ? asset('storage/' . $this->image) : 'https://media.istockphoto.com/id/1147544807/it/vettoriale/la-commissione-per-la-immagine-di-anteprima-grafica-vettoriale.jpg?s=612x612&w=0&k=20&c=gsxHNYV71DzPuhyg-btvo-QhhTwWY0z4SGCSe44rvg4=';
+        return $this->image ? url('storage/' . $this->image) : 'https://media.istockphoto.com/id/1147544807/it/vettoriale/la-commissione-per-la-immagine-di-anteprima-grafica-vettoriale.jpg?s=612x612&w=0&k=20&c=gsxHNYV71DzPuhyg-btvo-QhhTwWY0z4SGCSe44rvg4=';
     }
 
     // Mutators - formattazione date
@@ -58,7 +63,10 @@ class Project extends Model
     protected function getUpdatedAttribute($value)
     {
         //return date('d/m/y', strtotime($value));
-        return Carbon::now()->format('d/m/Y');
+        $date_from = Carbon::create($value);
+        $date_now = Carbon::now();
+        return $diff_in_minutes = $date_from->diffForHumans($date_now);
+        return Carbon::tomorrow()->format('d/m/Y');
     }
     protected function getCreatedAttribute($value)
     {

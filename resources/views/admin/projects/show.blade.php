@@ -30,13 +30,15 @@
                     Nessuna ecnologia
                 @endforelse 
             </p>
-            <figure class="float-end">
-                <img src="{{ $project->getImageUri() }}" class="w-50" alt="{{ $project->slug }}">
-                <figcaption>
-                    <p class="text-muted">{{ $project->title }}</p>
-                </figcaption>
-            </figure>
-            <p>{{ $project->text }}</p>
+            <div class="clearfix">
+                <figure class="float-end">
+                    <img src="{{ $project->getImageUri() }}" class="w-50" alt="{{ $project->slug }}">
+                    <figcaption>
+                        <p class="text-muted">{{ $project->title }}</p>
+                    </figcaption>
+                </figure>
+                <p>{{ $project->text }}</p>
+            </div>
         </div>
     </section> 
 

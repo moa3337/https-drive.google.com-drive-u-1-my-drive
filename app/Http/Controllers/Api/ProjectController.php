@@ -21,7 +21,10 @@ class ProjectController extends Controller
             ->paginate(6);
 
         foreach ($projects as $project) {
-            $project->text = $project->getAbstract(180);
+            $project->text = $project->getAbstract(200);
+        }
+        foreach ($projects as $project) {
+            $project->image = $project->getImageUri();
         }
 
         return response()->json($projects);
@@ -50,30 +53,31 @@ class ProjectController extends Controller
             ->with('type', 'technologies')
             ->first();
         if (!$project) return response(null, 404);
+      
+        $project->image = $project->getImageUri();
 
         return response()->json($project);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Display the specified resource filtered by type_id).
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function getProjectsByType($type_id)
     {
-        //
-    }
+        $projects = Project::where('$type_id', $type_id)
+            ->where('published', true)
+            ->with('type', 'technologies')
+            ->orderBy('updated_at', 'DESC')
+            ->paginate(6);
+        
+        $type = Type::find($type_id);
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        foreach ($projects as $project) {
+            $project->image = $project->getImageUri();
+        }
+        return response()->json(compact('projects', 'type'));
     }
 }

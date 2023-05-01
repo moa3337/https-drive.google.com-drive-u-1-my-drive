@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ProjectController;
+use App\Http\Controllers\Api\CommentController;
 
 
 /*
@@ -16,9 +17,10 @@ use App\Http\Controllers\Api\ProjectController;
 |
 */
 
-Route::apiResource('projects', ProjectController::class);
-/*Route::get('/test', function () {
-    $names =
-        ['io', 'star', 'luk'];
-    return response()->json(['names' => $names]);
-});*/
+Route::apiResource('projects', ProjectController::class)
+    ->except('store', 'update', 'destroy');
+Route::get('/type/{type_id}/projects', [ProjectController::class, 'getProjecstByType']);
+
+// Rotte per i commenti
+Route::get('project/{project_id}/comments', [CommentController::class, 'getCommentByProject']);
+Route::post('comments', [CommentController::class, 'store']);
