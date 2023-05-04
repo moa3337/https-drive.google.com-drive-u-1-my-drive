@@ -49,7 +49,7 @@ class CommentController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function getCommentByProject($project_id)
+    public function getCommentsByProject($project_id)
     {
         $comments = Comment::where('project_id', $project_id)
             ->orderBy('updated_at', 'DESC')

@@ -22,5 +22,5 @@ Route::apiResource('projects', ProjectController::class)
 Route::get('/type/{type_id}/projects', [ProjectController::class, 'getProjecstByType']);
 
 // Rotte per i commenti
-Route::get('project/{project_id}/comments', [CommentController::class, 'getCommentByProject']);
+Route::get('project/{project_id}/comments', [CommentController::class, 'getCommenstByProject']);
 Route::post('comments', [CommentController::class, 'store']);
