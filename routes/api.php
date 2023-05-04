@@ -21,6 +21,6 @@ Route::apiResource('projects', ProjectController::class)
     ->except('store', 'update', 'destroy');
 Route::get('/type/{type_id}/projects', [ProjectController::class, 'getProjecstByType']);
 
-// Rotte per i commenti
+// Rotte per i commenti 
 Route::get('project/{project_id}/comments', [CommentController::class, 'getCommenstByProject']);
 Route::post('comments', [CommentController::class, 'store']);
